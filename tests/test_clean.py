@@ -33,6 +33,23 @@ class TestRemoveEmojis:
         text = "import * from 'react'; // #1 module"
         assert remove_emojis(text) == text
 
+    def test_removes_skin_tone_emoji(self):
+        # Thumbs up with medium skin tone
+        assert remove_emojis("Nice job! \U0001F44D\U0001F3FD") == "Nice job! "
+
+    def test_removes_zwj_family_emoji(self):
+        # Family: Man, Woman, Girl, Boy (ZWJ sequence)
+        family_emoji = "\U0001F468\u200d\U0001F469\u200d\U0001F467\u200d\U0001F466"
+        assert remove_emojis(f"Family: {family_emoji}") == "Family: "
+
+    def test_removes_flag_emoji(self):
+        # Flag: United States
+        assert remove_emojis("USA \U0001F1FA\U0001F1F8") == "USA "
+
+    def test_removes_newer_unicode_emoji(self):
+        # Ninja (added in Unicode 13.0)
+        assert remove_emojis("Ninja \U0001F977") == "Ninja "
+
 class TestIsAiGenerated:
     def test_detects_ai_suffix(self, tmp_path):
         ai_file = tmp_path / "notes_ai.md"
